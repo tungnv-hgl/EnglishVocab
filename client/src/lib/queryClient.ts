@@ -29,7 +29,15 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey.join("/") as string, {
+    // Build URL from queryKey array - handles both simple paths and hierarchical routes
+    // e.g., ["/api/collections", id, "vocabulary", "words"] -> "/api/collections/id/vocabulary/words"
+    const url = queryKey
+      .filter((part) => part != null)
+      .map((part) => String(part))
+      .join("/")
+      .replace(/\/+/g, "/"); // Clean up any double slashes
+    
+    const res = await fetch(url, {
       credentials: "include",
     });
 
