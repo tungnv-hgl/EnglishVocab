@@ -105,13 +105,15 @@ To run VocabMaster on your local machine:
    ```
 
 3. **Set up environment variables**
-   Create a `.env.local` file in the root directory:
+   Create a `.env` file (or `.env.local`) in the **root directory** (same level as package.json):
    ```
    DATABASE_URL=postgresql://user:password@localhost:5432/vocab_master
    OPENAI_API_KEY=sk-xxx...your_openai_api_key
    SESSION_SECRET=your_random_secret_for_sessions
    REPLIT_AUTH_TOKEN=optional_for_local_auth
    ```
+   
+   **Important:** The file must be in the root directory for the app to find it.
 
    **Where to get these values:**
    - `DATABASE_URL`: From your local PostgreSQL or Neon console
