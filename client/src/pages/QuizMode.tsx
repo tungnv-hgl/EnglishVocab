@@ -272,20 +272,24 @@ export default function QuizMode() {
             const isCorrect = index === currentQuestion.correctIndex;
             const isSelected = selectedAnswer === index;
             
-            let buttonClass = "w-full p-4 text-left justify-start h-auto";
+            let buttonClass = "w-full p-4 text-left justify-start h-auto rounded-xl font-medium transition-all duration-300 animate-slide-up border-2";
             
             if (isAnswered) {
               if (isCorrect) {
-                buttonClass += " bg-chart-2/10 border-chart-2 text-chart-2";
+                buttonClass += " bg-green-500 border-green-500 text-white";
               } else if (isSelected && !isCorrect) {
-                buttonClass += " bg-destructive/10 border-destructive text-destructive";
+                buttonClass += " bg-red-500 border-red-500 text-white";
+              } else {
+                buttonClass += " border-gray-300";
               }
+            } else {
+              buttonClass += " border-gray-300 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950 cursor-pointer";
             }
 
             return (
               <Button
                 key={index}
-                variant={isAnswered && (isCorrect || isSelected) ? "outline" : "outline"}
+                variant="outline"
                 className={buttonClass}
                 onClick={() => handleAnswerSelect(index)}
                 disabled={isAnswered}

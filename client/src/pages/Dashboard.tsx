@@ -44,81 +44,81 @@ export default function Dashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        <Card>
+        <Card className="bg-gradient-blue text-white card-hover-lift animate-slide-up shadow-lg">
           <CardContent className="p-6">
             {statsLoading ? (
               <div className="space-y-2">
-                <Skeleton className="h-8 w-8" />
-                <Skeleton className="h-8 w-16" />
-                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-8 w-8 bg-white/20" />
+                <Skeleton className="h-8 w-16 bg-white/20" />
+                <Skeleton className="h-4 w-24 bg-white/20" />
               </div>
             ) : (
               <>
-                <BookOpen className="h-8 w-8 text-primary mb-2" />
-                <div className="text-3xl font-bold" data-testid="text-total-words">
+                <BookOpen className="h-8 w-8 mb-3 text-white" />
+                <div className="text-4xl font-extrabold" data-testid="text-total-words">
                   {stats?.totalWords ?? 0}
                 </div>
-                <p className="text-sm text-muted-foreground">Total Words</p>
+                <p className="text-sm text-white/80 mt-1">Total Words</p>
               </>
             )}
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="bg-gradient-green text-white card-hover-lift animate-slide-up shadow-lg" style={{ animationDelay: '50ms' }}>
           <CardContent className="p-6">
             {statsLoading ? (
               <div className="space-y-2">
-                <Skeleton className="h-8 w-8" />
-                <Skeleton className="h-8 w-16" />
-                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-8 w-8 bg-white/20" />
+                <Skeleton className="h-8 w-16 bg-white/20" />
+                <Skeleton className="h-4 w-24 bg-white/20" />
               </div>
             ) : (
               <>
-                <Trophy className="h-8 w-8 text-chart-4 mb-2" />
-                <div className="text-3xl font-bold" data-testid="text-words-learned">
+                <Trophy className="h-8 w-8 mb-3 text-white" />
+                <div className="text-4xl font-extrabold" data-testid="text-words-learned">
                   {stats?.wordsLearned ?? 0}
                 </div>
-                <p className="text-sm text-muted-foreground">Words Learned</p>
+                <p className="text-sm text-white/80 mt-1">Words Learned</p>
               </>
             )}
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="bg-gradient-orange text-white card-hover-lift animate-slide-up shadow-lg" style={{ animationDelay: '100ms' }}>
           <CardContent className="p-6">
             {statsLoading ? (
               <div className="space-y-2">
-                <Skeleton className="h-8 w-8" />
-                <Skeleton className="h-8 w-16" />
-                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-8 w-8 bg-white/20" />
+                <Skeleton className="h-8 w-16 bg-white/20" />
+                <Skeleton className="h-4 w-24 bg-white/20" />
               </div>
             ) : (
               <>
-                <Target className="h-8 w-8 text-chart-2 mb-2" />
-                <div className="text-3xl font-bold" data-testid="text-accuracy">
+                <Target className="h-8 w-8 mb-3 text-white" />
+                <div className="text-4xl font-extrabold" data-testid="text-accuracy">
                   {stats?.averageAccuracy ? `${Math.round(stats.averageAccuracy)}%` : "0%"}
                 </div>
-                <p className="text-sm text-muted-foreground">Quiz Accuracy</p>
+                <p className="text-sm text-white/80 mt-1">Quiz Accuracy</p>
               </>
             )}
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="bg-gradient-purple text-white card-hover-lift animate-slide-up shadow-lg" style={{ animationDelay: '150ms' }}>
           <CardContent className="p-6">
             {statsLoading ? (
               <div className="space-y-2">
-                <Skeleton className="h-8 w-8" />
-                <Skeleton className="h-8 w-16" />
-                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-8 w-8 bg-white/20" />
+                <Skeleton className="h-8 w-16 bg-white/20" />
+                <Skeleton className="h-4 w-24 bg-white/20" />
               </div>
             ) : (
               <>
-                <FolderOpen className="h-8 w-8 text-chart-3 mb-2" />
-                <div className="text-3xl font-bold" data-testid="text-total-collections">
+                <FolderOpen className="h-8 w-8 mb-3 text-white" />
+                <div className="text-4xl font-extrabold" data-testid="text-total-collections">
                   {stats?.totalCollections ?? 0}
                 </div>
-                <p className="text-sm text-muted-foreground">Collections</p>
+                <p className="text-sm text-white/80 mt-1">Collections</p>
               </>
             )}
           </CardContent>

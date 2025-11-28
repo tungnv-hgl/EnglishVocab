@@ -255,9 +255,7 @@ export default function FlashcardMode() {
         data-testid="flashcard"
       >
         <div 
-          className={`relative w-full min-h-[300px] transition-transform duration-500 transform-style-preserve-3d ${
-            isFlipped ? "rotate-y-180" : ""
-          }`}
+          className="flip-card w-full min-h-[400px]"
           style={{
             transformStyle: "preserve-3d",
             transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
@@ -265,18 +263,18 @@ export default function FlashcardMode() {
         >
           {/* Front of card */}
           <Card 
-            className="absolute w-full h-full backface-hidden"
+            className="flip-card-front absolute w-full h-full min-h-[400px] bg-gradient-blue text-white shadow-2xl rounded-2xl"
             style={{ backfaceVisibility: "hidden" }}
           >
-            <CardContent className="flex flex-col items-center justify-center h-full min-h-[300px] p-8">
-              <p className="text-sm text-muted-foreground mb-4">Click to reveal meaning</p>
-              <h2 className="text-4xl font-bold text-center" data-testid="text-flashcard-word">
+            <CardContent className="flex flex-col items-center justify-center h-full min-h-[400px] p-8">
+              <p className="text-sm text-white/80 mb-6 font-medium">Click to reveal meaning</p>
+              <h2 className="text-5xl md:text-6xl font-extrabold text-center" data-testid="text-flashcard-word">
                 {currentCard.word}
               </h2>
               {isLearned && (
-                <div className="absolute top-4 right-4">
-                  <div className="h-8 w-8 rounded-full bg-chart-2 flex items-center justify-center">
-                    <Check className="h-5 w-5 text-white" />
+                <div className="absolute top-6 right-6 animate-scale-bounce">
+                  <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center shadow-lg">
+                    <Check className="h-6 w-6 text-green-500 font-bold" />
                   </div>
                 </div>
               )}
@@ -285,28 +283,21 @@ export default function FlashcardMode() {
 
           {/* Back of card */}
           <Card 
-            className="absolute w-full h-full backface-hidden bg-card"
+            className="flip-card-back absolute w-full h-full min-h-[400px] bg-gradient-purple text-white shadow-2xl rounded-2xl"
             style={{ 
               backfaceVisibility: "hidden",
               transform: "rotateY(180deg)",
             }}
           >
-            <CardContent className="flex flex-col items-center justify-center h-full min-h-[300px] p-8">
-              <p className="text-sm text-muted-foreground mb-2">{currentCard.word}</p>
-              <p className="text-xl text-center mb-4" data-testid="text-flashcard-meaning">
+            <CardContent className="flex flex-col items-center justify-center h-full min-h-[400px] p-8">
+              <p className="text-sm text-white/70 mb-4 font-medium uppercase tracking-wide">Meaning</p>
+              <p className="text-3xl font-bold text-center mb-6" data-testid="text-flashcard-meaning">
                 {currentCard.meaning}
               </p>
               {currentCard.example && (
-                <p className="text-sm italic text-muted-foreground text-center">
+                <p className="text-sm italic text-white/70 text-center">
                   "{currentCard.example}"
                 </p>
-              )}
-              {isLearned && (
-                <div className="absolute top-4 right-4">
-                  <div className="h-8 w-8 rounded-full bg-chart-2 flex items-center justify-center">
-                    <Check className="h-5 w-5 text-white" />
-                  </div>
-                </div>
               )}
             </CardContent>
           </Card>
