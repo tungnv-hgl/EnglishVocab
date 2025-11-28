@@ -8,6 +8,7 @@ import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertCollectionSchema, insertVocabularySchema, insertQuizResultSchema } from "@shared/schema";
 import { z } from "zod";
 import { seedDatabase } from "./seed";
+import OpenAI from "openai";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up Replit Auth
@@ -285,7 +286,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Text is required" });
       }
 
-      const OpenAI = require("openai").default;
       const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
       
       const mp3 = await openai.audio.speech.create({
