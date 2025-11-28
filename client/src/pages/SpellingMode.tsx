@@ -247,6 +247,27 @@ export default function SpellingMode() {
   }
 
   const currentWord = words[currentIndex];
+  
+  if (!currentWord) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <Card className="p-12">
+          <div className="text-center">
+            <h2 className="text-xl font-semibold mb-2">No Words Available</h2>
+            <p className="text-muted-foreground mb-4">
+              Add some vocabulary words to start practicing spelling.
+            </p>
+            <Link href={collectionId ? `/collections/${collectionId}` : "/vocabulary"}>
+              <Button data-testid="button-back-to-words">
+                {collectionId ? "Back to Collection" : "Back to Vocabulary"}
+              </Button>
+            </Link>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
   const progressPercent = ((currentIndex + 1) / words.length) * 100;
 
   return (
