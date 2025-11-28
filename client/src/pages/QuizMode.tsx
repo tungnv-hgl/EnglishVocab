@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Check, X, Trophy, RotateCcw, ArrowRight } from "lucide-react";
+import { ArrowLeft, Check, X, Trophy, RotateCcw, ArrowRight, Volume2 } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
@@ -142,6 +142,25 @@ export default function QuizMode() {
     }
   };
 
+  const playPronunciation = async (word: string) => {
+    try {
+      const response = await fetch("/api/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: word }),
+      });
+      
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        audio.play();
+      }
+    } catch (error) {
+      console.error("Error playing pronunciation:", error);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="max-w-2xl mx-auto space-y-8">
@@ -256,9 +275,19 @@ export default function QuizMode() {
       <Card className="p-8">
         <div className="text-center mb-8">
           <p className="text-sm text-muted-foreground mb-2">What does this word mean?</p>
-          <h2 className="text-4xl font-bold" data-testid="text-quiz-word">
-            {currentQuestion.word.word}
-          </h2>
+          <div className="flex items-center justify-center gap-3">
+            <h2 className="text-4xl font-bold" data-testid="text-quiz-word">
+              {currentQuestion.word.word}
+            </h2>
+            <Button 
+              size="icon" 
+              variant="outline" 
+              onClick={() => playPronunciation(currentQuestion.word.word)}
+              data-testid="button-play-pronunciation"
+            >
+              <Volume2 className="h-4 w-4" />
+            </Button>
+          </div>
           {currentQuestion.word.example && (
             <p className="text-sm italic text-muted-foreground mt-4">
               "{currentQuestion.word.example}"

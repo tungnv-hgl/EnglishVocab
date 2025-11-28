@@ -13,7 +13,8 @@ import {
   X, 
   Trophy, 
   RotateCcw,
-  Lightbulb
+  Lightbulb,
+  Volume2
 } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -166,6 +167,25 @@ export default function SpellingMode() {
     return hint;
   };
 
+  const playPronunciation = async (word: string) => {
+    try {
+      const response = await fetch("/api/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: word }),
+      });
+      
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        audio.play();
+      }
+    } catch (error) {
+      console.error("Error playing pronunciation:", error);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="max-w-2xl mx-auto space-y-8">
@@ -300,9 +320,19 @@ export default function SpellingMode() {
       <Card className="p-8">
         <div className="text-center mb-6">
           <p className="text-sm text-muted-foreground mb-2">Type the word that matches:</p>
-          <p className="text-xl mb-4" data-testid="text-meaning">
-            {currentWord.meaning}
-          </p>
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <p className="text-xl" data-testid="text-meaning">
+              {currentWord.meaning}
+            </p>
+            <Button 
+              size="icon" 
+              variant="outline" 
+              onClick={() => playPronunciation(currentWord.word)}
+              data-testid="button-play-pronunciation"
+            >
+              <Volume2 className="h-4 w-4" />
+            </Button>
+          </div>
           {currentWord.example && (
             <p className="text-sm italic text-muted-foreground">
               "{currentWord.example.replace(new RegExp(currentWord.word, 'gi'), '___')}"

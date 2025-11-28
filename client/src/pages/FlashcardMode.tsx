@@ -12,7 +12,8 @@ import {
   ChevronRight, 
   RotateCcw,
   Check,
-  Trophy
+  Trophy,
+  Volume2
 } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -135,6 +136,25 @@ export default function FlashcardMode() {
       setIsFlipped(false);
       setLearnedCards(new Set());
       setIsComplete(false);
+    }
+  };
+
+  const playPronunciation = async (word: string) => {
+    try {
+      const response = await fetch("/api/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: word }),
+      });
+      
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        audio.play();
+      }
+    } catch (error) {
+      console.error("Error playing pronunciation:", error);
     }
   };
 
@@ -289,9 +309,20 @@ export default function FlashcardMode() {
           >
             <CardContent className="flex flex-col items-center justify-center h-full min-h-[400px] p-8">
               <p className="text-sm text-white/80 mb-6 font-medium">Click to reveal meaning</p>
-              <h2 className="text-5xl md:text-6xl font-extrabold text-center" data-testid="text-flashcard-word">
-                {currentCard.word}
-              </h2>
+              <div className="flex items-center gap-4">
+                <h2 className="text-5xl md:text-6xl font-extrabold text-center" data-testid="text-flashcard-word">
+                  {currentCard.word}
+                </h2>
+                <Button 
+                  size="icon" 
+                  variant="ghost" 
+                  className="text-white hover:bg-white/20"
+                  onClick={(e) => { e.stopPropagation(); playPronunciation(currentCard.word); }}
+                  data-testid="button-play-pronunciation"
+                >
+                  <Volume2 className="h-6 w-6" />
+                </Button>
+              </div>
               {isLearned && (
                 <div className="absolute top-6 right-6 animate-scale-bounce">
                   <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center shadow-lg">

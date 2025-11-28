@@ -276,6 +276,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Text-to-speech pronunciation
+  app.post("/api/tts", isAuthenticated, async (req: any, res) => {
+    try {
+      const { text } = req.body;
+      
+      if (!text) {
+        return res.status(400).json({ message: "Text is required" });
+      }
+
+      const OpenAI = require("openai").default;
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      
+      const mp3 = await openai.audio.speech.create({
+        model: "tts-1",
+        voice: "alloy",
+        input: text,
+      });
+
+      const buffer = await mp3.arrayBuffer();
+      res.set("Content-Type", "audio/mpeg");
+      res.send(Buffer.from(buffer));
+    } catch (error) {
+      console.error("Error generating TTS:", error);
+      res.status(500).json({ message: "Failed to generate audio" });
+    }
+  });
+
   // Seed data endpoint
   app.post("/api/seed", isAuthenticated, async (req: any, res) => {
     try {
