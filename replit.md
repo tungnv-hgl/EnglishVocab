@@ -165,6 +165,13 @@ If you're on Windows and get `'NODE_ENV' is not recognized` error:
    - Change to: `"start": "cross-env NODE_ENV=production node dist/index.cjs"`
 3. Save and run `npm run dev`
 
+### Local Development Authentication
+When running locally (not on Replit), the app automatically uses mock authentication:
+- You'll be logged in as "Dev User" with email `dev@localhost.local`
+- All API endpoints will work without Replit Auth
+- Perfect for testing the full feature set locally
+- No need to provide REPLIT_AUTH_TOKEN for local development
+
 ### Troubleshooting
 - If you get "Database connection failed", check your `DATABASE_URL` in `.env.local`
 - If TTS doesn't work, ensure `OPENAI_API_KEY` is valid
