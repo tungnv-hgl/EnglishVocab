@@ -124,7 +124,24 @@ To run VocabMaster on your local machine:
    npm run db:push
    ```
 
-5. **Start the development server**
+5. **Update package.json scripts for Windows** (Windows users only)
+   
+   Edit the `package.json` file and replace these lines in the "scripts" section:
+   ```json
+   "dev": "cross-env NODE_ENV=development tsx server/index.ts",
+   "start": "cross-env NODE_ENV=production node dist/index.cjs"
+   ```
+   
+   Then save the file. This allows the app to run on Windows.
+
+6. **Start the development server**
+   
+   **Linux/Mac:**
+   ```bash
+   npm run dev
+   ```
+   
+   **Windows (after editing package.json):**
    ```bash
    npm run dev
    ```
@@ -135,10 +152,22 @@ To run VocabMaster on your local machine:
 - **Local PostgreSQL**: Install PostgreSQL locally and use `postgresql://localhost:5432/vocab_master`
 - **Neon (recommended)**: Sign up at https://neon.tech and get a connection string with one click
 
+### Windows-Specific Setup
+If you're on Windows and get `'NODE_ENV' is not recognized` error:
+
+1. The `cross-env` package is already installed
+2. Edit `package.json` and update lines 7 and 9:
+   - Change line 7 from: `"dev": "NODE_ENV=development tsx server/index.ts"`
+   - Change to: `"dev": "cross-env NODE_ENV=development tsx server/index.ts"`
+   - Change line 9 from: `"start": "NODE_ENV=production node dist/index.cjs"`
+   - Change to: `"start": "cross-env NODE_ENV=production node dist/index.cjs"`
+3. Save and run `npm run dev`
+
 ### Troubleshooting
 - If you get "Database connection failed", check your `DATABASE_URL` in `.env.local`
 - If TTS doesn't work, ensure `OPENAI_API_KEY` is valid
 - For auth issues, restart the dev server: `npm run dev`
+- Windows users: Make sure to update package.json scripts with cross-env as shown above
 
 ## User Preferences
 - Dark mode support with theme toggle
