@@ -217,7 +217,6 @@ export default function VocabularyImport() {
               <SelectValue placeholder="Select a collection (optional)" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">No collection</SelectItem>
               {collections?.map((collection) => (
                 <SelectItem key={collection.id} value={collection.id}>
                   <div className="flex items-center gap-2">

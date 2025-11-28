@@ -265,7 +265,6 @@ export default function VocabularyForm() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="">No collection</SelectItem>
                         {collections?.map((collection) => (
                           <SelectItem key={collection.id} value={collection.id}>
                             <div className="flex items-center gap-2">
