@@ -10,9 +10,13 @@ import { storage } from "./storage";
 
 const getOidcConfig = memoize(
   async () => {
+    // Only available on Replit
+    if (!process.env.REPL_ID) {
+      throw new Error("REPL_ID not available - must be running on Replit");
+    }
     return await client.discovery(
       new URL(process.env.ISSUER_URL ?? "https://replit.com/oidc"),
-      process.env.REPL_ID!
+      process.env.REPL_ID
     );
   },
   { maxAge: 3600 * 1000 }
