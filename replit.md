@@ -76,12 +76,69 @@ VocabMaster is a comprehensive English vocabulary learning platform with user au
 - `POST /api/quiz-results` - Save study session results
 - `GET /api/dashboard/stats` - Dashboard statistics
 - `POST /api/seed` - Seed sample data (one-time)
+- `POST /api/tts` - Text-to-speech pronunciation (requires OPENAI_API_KEY)
 
-## Running the Project
+## Running the Project on Replit
 The project uses `npm run dev` which starts both the Express backend and Vite frontend on port 5000.
 
 ## Database Commands
 - `npm run db:push` - Push schema changes to database
+
+## Running Locally
+To run VocabMaster on your local machine:
+
+### Prerequisites
+- Node.js 18 or higher
+- PostgreSQL database (local or cloud-based like Neon)
+
+### Setup Steps
+
+1. **Clone/Download the repository**
+   ```bash
+   git clone <your-repo-url>
+   cd vocab-master
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   Create a `.env.local` file in the root directory:
+   ```
+   DATABASE_URL=postgresql://user:password@localhost:5432/vocab_master
+   OPENAI_API_KEY=sk-xxx...your_openai_api_key
+   SESSION_SECRET=your_random_secret_for_sessions
+   REPLIT_AUTH_TOKEN=optional_for_local_auth
+   ```
+
+   **Where to get these values:**
+   - `DATABASE_URL`: From your local PostgreSQL or Neon console
+   - `OPENAI_API_KEY`: Get from https://platform.openai.com/api-keys
+   - `SESSION_SECRET`: Any random string (e.g., `dev-secret-123`)
+
+4. **Set up the database** (if using local PostgreSQL)
+   ```bash
+   createdb vocab_master
+   npm run db:push
+   ```
+
+5. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+
+   Access the app at **http://localhost:5000**
+
+### Database Options
+- **Local PostgreSQL**: Install PostgreSQL locally and use `postgresql://localhost:5432/vocab_master`
+- **Neon (recommended)**: Sign up at https://neon.tech and get a connection string with one click
+
+### Troubleshooting
+- If you get "Database connection failed", check your `DATABASE_URL` in `.env.local`
+- If TTS doesn't work, ensure `OPENAI_API_KEY` is valid
+- For auth issues, restart the dev server: `npm run dev`
 
 ## User Preferences
 - Dark mode support with theme toggle
@@ -94,3 +151,6 @@ The project uses `npm run dev` which starts both the Express backend and Vite fr
 - Implemented all three learning modes
 - Created bulk import functionality for CSV/JSON
 - Added progress tracking and dashboard stats
+- Integrated OpenAI text-to-speech for pronunciation support in all learning modes
+- Fixed TTS endpoint with proper ES6 imports
+- Added speaker icons to Flashcards, Quiz, and Spelling modes
