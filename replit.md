@@ -62,9 +62,10 @@ VocabMaster is a comprehensive English vocabulary learning platform with user au
 - **quizResults**: Quiz/study session results
 
 ## Key Features
-1. **User Authentication**: 
-   - **Replit Production**: Google OAuth via Replit Auth (built-in, no setup needed)
-   - **Local Development**: Form-based login (email, first name, last name)
+1. **User Authentication**: Google OAuth 2.0 (works on any server)
+   - Sign in with Google account
+   - User profile auto-populated
+   - Secure OIDC token handling
 2. **Vocabulary Management**: Full CRUD operations, bulk import (CSV/JSON)
 3. **Collections**: Organize words into themed groups
 4. **Learning Modes**:
@@ -163,50 +164,66 @@ To run VocabMaster on your local machine:
 - **Local PostgreSQL**: Install PostgreSQL locally and use `postgresql://localhost:5432/vocab_master`
 - **Neon (recommended)**: Sign up at https://neon.tech and get a connection string with one click
 
-### Local Development Authentication
-When running locally (not on Replit), the app uses form-based authentication:
-- **Login Page**: Enter your email, first name, and last name to sign in
-- No Google OAuth keys needed - simpler local testing
-- Each user gets a unique ID based on their email
-- All API endpoints work without Replit Auth
-- Perfect for testing the full feature set locally
+### Setting Up Google OAuth
 
-### Production (Replit) Authentication
-When deployed on Replit:
-- **Google OAuth**: One-click login with Google via Replit Auth (built-in)
-- User profile automatically populated from Google account
-- No additional Google API key setup needed - Replit handles everything
-- Secure OIDC tokens and session management
+**Step 1: Create a Google OAuth Application**
+1. Go to [Google Cloud Console](https://console.cloud.google.com)
+2. Create a new project
+3. Enable "Google+ API"
+4. Go to "Credentials" → Create "OAuth 2.0 Client ID"
+5. Choose "Web application"
+6. Add authorized redirect URI: `http://localhost:5000/api/callback` (local) or `https://yourdomain.com/api/callback` (production)
+7. Copy your Client ID and Client Secret
 
-## Windows Quick Start (TL;DR)
+**Step 2: Set Environment Variables**
+Create `.env` file in your project root:
+```
+GOOGLE_CLIENT_ID=your_client_id_here
+GOOGLE_CLIENT_SECRET=your_client_secret_here
+GOOGLE_CALLBACK_URL=http://localhost:5000/api/callback
+DATABASE_URL=postgresql://user:password@localhost:5432/vocab_master
+OPENAI_API_KEY=sk-...
+SESSION_SECRET=dev-secret-123
+NODE_ENV=development
+```
 
-If you just want to run it quickly on Windows:
+For production, update:
+- `GOOGLE_CALLBACK_URL=https://yourdomain.com/api/callback`
+- `NODE_ENV=production`
+- Use a secure PostgreSQL instance (Neon, AWS RDS, etc.)
 
-1. Create `.env` in your project root:
-   ```
-   DATABASE_URL=postgresql://postgres:30042001@localhost:5433/vocab_master
-   OPENAI_API_KEY=sk-proj-...your_key...
-   SESSION_SECRET=dev-secret
-   ```
+## Quick Start (All Platforms)
 
-2. Open PowerShell in your project directory
-
-3. Run:
-   ```powershell
+1. **Clone and install**:
+   ```bash
    npm install
-   .\dev-windows.bat
    ```
 
-4. Open http://localhost:5000 in your browser
+2. **Get Google OAuth credentials** (see "Setting Up Google OAuth" above)
 
-5. Open http://localhost:5000
-6. On the login page, enter:
-   - Email: any email (e.g., `test@example.com`)
-   - First Name: any name (e.g., `John`)
-   - Last Name: any name (e.g., `Doe`)
-7. Click "Sign In"
+3. **Create `.env` file**:
+   ```
+   GOOGLE_CLIENT_ID=your_id
+   GOOGLE_CLIENT_SECRET=your_secret
+   GOOGLE_CALLBACK_URL=http://localhost:5000/api/callback
+   DATABASE_URL=postgresql://user:password@localhost:5432/vocab_master
+   OPENAI_API_KEY=sk-...
+   SESSION_SECRET=random-secret-key
+   NODE_ENV=development
+   ```
 
-Done! You're now logged in and can test everything locally.
+4. **Set up database**:
+   ```bash
+   npm run db:push
+   ```
+
+5. **Start dev server**:
+   - **Windows**: `.\dev-windows.bat`
+   - **Mac/Linux**: `npm run dev`
+
+6. **Open** http://localhost:5000 and sign in with Google!
+
+Done! Everything works on any server with Google OAuth.
 
 ### Troubleshooting
 
@@ -248,17 +265,17 @@ Done! You're now logged in and can test everything locally.
 
 ## Recent Changes
 - Initial project setup with complete feature set
-- Added Replit Auth integration with local mock auth fallback
-- Implemented all three learning modes
+- Implemented all three learning modes (Quiz, Flashcards, Spelling)
 - Created bulk import functionality for CSV/JSON
 - Added progress tracking and dashboard stats
 - Integrated OpenAI text-to-speech for pronunciation support in all learning modes
 - Fixed TTS endpoint with proper ES6 imports
-- Added speaker icons to Flashcards, Quiz, and Spelling modes
-- Created Windows-friendly dev launchers (dev-windows.bat, dev-windows.sh, dev-windows.js)
-- Added comprehensive local development setup documentation
-- **NEW**: Implemented dual authentication system:
-  - Google OAuth for production (Replit) - built-in, no setup needed
-  - Form-based login for local development - email, first name, last name
-  - Created `/login` page with proper user information collection
-  - No additional Google API keys required
+- Added speaker icons to all learning modes
+- Created Windows-friendly dev launchers
+- **NEW**: Replaced Replit Auth with Google OAuth 2.0
+  - Works on any server (local, self-hosted, cloud)
+  - Simple Google login integration
+  - Auto-populates user profile from Google account
+  - Secure OIDC token handling
+  - No Replit dependency - fully portable
+  - Step-by-step Google OAuth setup guide added

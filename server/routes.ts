@@ -12,54 +12,16 @@ import OpenAI from "openai";
 
 // Helper to extract user ID from session
 function getUserId(req: any): string {
-  // For local dev: user ID is stored in session
-  if (req.user.userId) return req.user.userId;
-  // For Replit Auth: user ID is in claims
-  if (req.user.claims?.sub) return req.user.claims.sub;
+  // Google OAuth: user ID is serialized directly
+  if (typeof req.user === "string") return req.user;
+  // Fallback for user object
+  if (req.user?.id) return req.user.id;
   throw new Error("User ID not found in session");
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Set up Replit Auth
+  // Set up Google OAuth
   await setupAuth(app);
-
-  // Register endpoint for local development
-  app.post("/api/auth/register", async (req: any, res) => {
-    try {
-      const { email, firstName, lastName } = req.body;
-      
-      if (!email || !firstName || !lastName) {
-        return res.status(400).json({ message: "Email, firstName, and lastName are required" });
-      }
-
-      // Create or update user
-      const user = await storage.upsertUser({
-        id: email.replace(/[^a-z0-9]/gi, "_").toLowerCase(),
-        email,
-        firstName,
-        lastName,
-        profileImageUrl: null,
-      });
-
-      // Log the user in
-      req.login({ userId: user.id, claims: { sub: user.id } }, (err) => {
-        if (err) {
-          console.error("Login error:", err);
-          return res.status(500).json({ message: "Failed to create session" });
-        }
-        req.session.save((err) => {
-          if (err) {
-            console.error("Session save error:", err);
-            return res.status(500).json({ message: "Failed to save session" });
-          }
-          res.json(user);
-        });
-      });
-    } catch (error: any) {
-      console.error("Registration error:", error);
-      res.status(500).json({ message: "Failed to register" });
-    }
-  });
 
   // Auth routes - get current user
   app.get("/api/auth/user", isAuthenticated, async (req: any, res) => {
