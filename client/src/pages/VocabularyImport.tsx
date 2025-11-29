@@ -80,10 +80,33 @@ export default function VocabularyImport() {
     const errors: string[] = [];
     const results: VocabImportType[] = [];
 
+    // Proper CSV parser that handles quoted fields with commas
+    const parseCSVLine = (line: string): string[] => {
+      const parts: string[] = [];
+      let current = "";
+      let inQuotes = false;
+
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === "," && !inQuotes) {
+          parts.push(current.trim().replace(/^"|"$/g, ""));
+          current = "";
+        } else {
+          current += char;
+        }
+      }
+
+      parts.push(current.trim().replace(/^"|"$/g, ""));
+      return parts;
+    };
+
     lines.forEach((line, index) => {
       if (!line.trim()) return;
       
-      const parts = line.split(",").map(p => p.trim().replace(/^"|"$/g, ""));
+      const parts = parseCSVLine(line);
       
       if (parts.length < 2) {
         errors.push(`Line ${index + 1}: Must have at least word and meaning`);
