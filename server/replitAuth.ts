@@ -88,8 +88,20 @@ export async function setupAuth(app: Express) {
       expires_at: Math.floor(Date.now() / 1000) + 86400,
     };
 
-    app.get("/api/login", (req, res) => {
-      req.login(mockUser, () => res.redirect("/"));
+    app.get("/api/login", (req, res, next) => {
+      req.login(mockUser, (err) => {
+        if (err) {
+          console.error("Login error:", err);
+          return next(err);
+        }
+        req.session.save((err) => {
+          if (err) {
+            console.error("Session save error:", err);
+            return next(err);
+          }
+          res.redirect("/");
+        });
+      });
     });
 
     app.get("/api/logout", (req, res) => {
