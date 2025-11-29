@@ -43,6 +43,7 @@ export default function QuizMode() {
     queryKey: collectionId 
       ? ["/api/collections", collectionId, "vocabulary", "words"]
       : ["/api/vocabulary"],
+    enabled: !(!collectionId && !vocabulary), // Ensure we fetch based on collection
   });
 
   const { data: collection } = useQuery<Collection>({
