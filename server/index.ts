@@ -85,17 +85,18 @@ app.use((req, res, next) => {
   // It is the only port that is not firewalled.
   const port = parseInt(process.env.PORT || "5000", 10);
   
-  // Use localhost for local development (Windows), 0.0.0.0 for Replit
-  const host = process.env.REPL_ID ? "0.0.0.0" : "localhost";
+  // Use 127.0.0.1 for local development (Windows), 0.0.0.0 for Replit
+  // IPv6 (::1) doesn't work on Windows, so we use IPv4 explicitly
+  const host = process.env.REPL_ID ? "0.0.0.0" : "127.0.0.1";
   
   httpServerFromRoutes.listen(
     {
       port,
       host,
-      reusePort: !process.env.REPL_ID, // reusePort not supported on localhost
+      reusePort: !!process.env.REPL_ID, // reusePort only for Replit
     },
     () => {
-      log(`serving on ${host}:${port}`);
+      log(`serving on http://${host}:${port}`);
     },
   );
 })();
