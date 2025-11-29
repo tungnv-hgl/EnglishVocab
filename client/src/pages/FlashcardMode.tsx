@@ -45,7 +45,6 @@ export default function FlashcardMode() {
     queryKey: collectionId 
       ? ["/api/collections", collectionId, "vocabulary", "words"]
       : ["/api/vocabulary"],
-    enabled: !!collectionId,
   });
 
   const { data: collection } = useQuery<Collection>({
