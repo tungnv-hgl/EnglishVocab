@@ -1,9 +1,6 @@
-import { Pool, neonConfig } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-serverless";
-import ws from "ws";
 import * as schema from "@shared/schema";
-
-neonConfig.webSocketConstructor = ws;
+import { drizzle } from "drizzle-orm/node-postgres";
+import pg from "pg";
 
 if (!process.env.DATABASE_URL) {
   throw new Error(
@@ -11,5 +8,15 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+// For local development with PostgreSQL (Windows, Mac, Linux)
+// Use regular pg driver instead of Neon's serverless driver
+const pool = new pg.Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+
+pool.on("error", (err) => {
+  console.error("Unexpected error on idle client", err);
+});
+
+export { pool };
 export const db = drizzle({ client: pool, schema });
