@@ -43,6 +43,7 @@ import {
 
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/Landing";
+import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
 import Collections from "@/pages/Collections";
 import CollectionForm from "@/pages/CollectionForm";
@@ -255,6 +256,7 @@ function Router() {
   if (!isAuthenticated) {
     return (
       <Switch>
+        <Route path="/login" component={Login} />
         <Route path="/" component={Landing} />
         <Route component={Landing} />
       </Switch>

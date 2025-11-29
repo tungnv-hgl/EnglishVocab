@@ -10,14 +10,61 @@ import { z } from "zod";
 import { seedDatabase } from "./seed";
 import OpenAI from "openai";
 
+// Helper to extract user ID from session
+function getUserId(req: any): string {
+  // For local dev: user ID is stored in session
+  if (req.user.userId) return req.user.userId;
+  // For Replit Auth: user ID is in claims
+  if (req.user.claims?.sub) return req.user.claims.sub;
+  throw new Error("User ID not found in session");
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up Replit Auth
   await setupAuth(app);
 
+  // Register endpoint for local development
+  app.post("/api/auth/register", async (req: any, res) => {
+    try {
+      const { email, firstName, lastName } = req.body;
+      
+      if (!email || !firstName || !lastName) {
+        return res.status(400).json({ message: "Email, firstName, and lastName are required" });
+      }
+
+      // Create or update user
+      const user = await storage.upsertUser({
+        id: email.replace(/[^a-z0-9]/gi, "_").toLowerCase(),
+        email,
+        firstName,
+        lastName,
+        profileImageUrl: null,
+      });
+
+      // Log the user in
+      req.login({ userId: user.id, claims: { sub: user.id } }, (err) => {
+        if (err) {
+          console.error("Login error:", err);
+          return res.status(500).json({ message: "Failed to create session" });
+        }
+        req.session.save((err) => {
+          if (err) {
+            console.error("Session save error:", err);
+            return res.status(500).json({ message: "Failed to save session" });
+          }
+          res.json(user);
+        });
+      });
+    } catch (error: any) {
+      console.error("Registration error:", error);
+      res.status(500).json({ message: "Failed to register" });
+    }
+  });
+
   // Auth routes - get current user
   app.get("/api/auth/user", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getUserId(req);
       const user = await storage.getUser(userId);
       res.json(user);
     } catch (error) {
@@ -29,7 +76,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Profile update
   app.patch("/api/profile", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getUserId(req);
       const { firstName, lastName } = req.body;
       
       const user = await storage.updateUser(userId, { firstName, lastName });
@@ -43,7 +90,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Dashboard stats
   app.get("/api/dashboard/stats", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getUserId(req);
       const stats = await storage.getDashboardStats(userId);
       res.json(stats);
     } catch (error) {
@@ -55,7 +102,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Collections routes
   app.get("/api/collections", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getUserId(req);
       const collections = await storage.getCollections(userId);
       res.json(collections);
     } catch (error) {
@@ -111,7 +158,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/collections", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getUserId(req);
       const validated = insertCollectionSchema.parse({
         ...req.body,
         userId,
@@ -160,7 +207,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Vocabulary routes
   app.get("/api/vocabulary", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getUserId(req);
       const vocab = await storage.getVocabulary(userId);
       res.json(vocab);
     } catch (error) {
@@ -187,7 +234,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/vocabulary", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getUserId(req);
       const validated = insertVocabularySchema.parse({
         ...req.body,
         userId,
@@ -242,7 +289,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Bulk import vocabulary
   app.post("/api/vocabulary/import", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getUserId(req);
       const { vocabulary: vocabItems, collectionId } = req.body;
       
       if (!Array.isArray(vocabItems) || vocabItems.length === 0) {
@@ -260,7 +307,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Quiz results
   app.post("/api/quiz-results", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getUserId(req);
       const validated = insertQuizResultSchema.parse({
         ...req.body,
         userId,
@@ -306,7 +353,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Seed data endpoint
   app.post("/api/seed", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getUserId(req);
       
       // Check if user already has data
       const existingCollections = await storage.getCollections(userId);

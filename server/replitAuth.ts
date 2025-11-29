@@ -88,47 +88,18 @@ export async function setupAuth(app: Express) {
   
   // Only set up Replit Auth if running on Replit (REPL_ID exists)
   if (!process.env.REPL_ID) {
-    // Local development - use mock auth
+    // Local development - use form-based auth
     app.use(getSession());
     app.use(passport.initialize());
     app.use(passport.session());
 
-    passport.serializeUser((user: Express.User, cb) => cb(null, user));
-    passport.deserializeUser((user: Express.User, cb) => cb(null, user));
-
-    // Create a mock user for local development
-    const mockUser = {
-      claims: {
-        sub: "local-dev-user",
-        email: "dev@localhost.local",
-        first_name: "Dev",
-        last_name: "User",
-      },
-      expires_at: Math.floor(Date.now() / 1000) + 86400,
-    };
-
-    app.get("/api/login", (req, res, next) => {
-      req.login(mockUser, (err) => {
-        if (err) {
-          console.error("Login error:", err);
-          return next(err);
-        }
-        req.session.save((err) => {
-          if (err) {
-            console.error("Session save error:", err);
-            return next(err);
-          }
-          res.redirect("/");
-        });
-      });
-    });
+    passport.serializeUser((user: any, cb) => cb(null, user));
+    passport.deserializeUser((user: any, cb) => cb(null, user));
 
     app.get("/api/logout", (req, res) => {
       req.logout(() => res.redirect("/"));
     });
 
-    // Ensure mock user exists in database
-    await upsertUser(mockUser.claims);
     return;
   }
 
@@ -204,7 +175,7 @@ export const isAuthenticated: RequestHandler = async (req, res, next) => {
 
   // For local development (no REPL_ID), just check if user is authenticated
   if (!process.env.REPL_ID) {
-    if (!req.isAuthenticated() || !user?.claims) {
+    if (!req.isAuthenticated() || (!user?.userId && !user?.claims)) {
       return res.status(401).json({ message: "Unauthorized" });
     }
     return next();

@@ -16,7 +16,7 @@ export default function Landing() {
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <Button asChild data-testid="button-login">
-              <a href="/api/login">Sign In</a>
+              <a href="/login">Sign In</a>
             </Button>
           </div>
         </div>
@@ -35,7 +35,7 @@ export default function Landing() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="gap-2" asChild data-testid="button-get-started">
-              <a href="/api/login">
+              <a href="/login">
                 Get Started Free
                 <ArrowRight className="h-5 w-5" />
               </a>
@@ -174,7 +174,7 @@ export default function Landing() {
             Join thousands of learners building their English vocabulary effectively.
           </p>
           <Button size="lg" className="gap-2" asChild data-testid="button-cta-signup">
-            <a href="/api/login">
+            <a href="/login">
               Start Learning Now
               <ArrowRight className="h-5 w-5" />
             </a>
