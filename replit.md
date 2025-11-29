@@ -166,13 +166,15 @@ To run VocabMaster on your local machine:
 
 ### Setting Up Google OAuth
 
+#### For Local Development
+
 **Step 1: Create a Google OAuth Application**
 1. Go to [Google Cloud Console](https://console.cloud.google.com)
 2. Create a new project
 3. Enable "Google+ API"
 4. Go to "Credentials" → Create "OAuth 2.0 Client ID"
 5. Choose "Web application"
-6. Add authorized redirect URI: `http://localhost:5000/api/callback` (local) or `https://yourdomain.com/api/callback` (production)
+6. Add authorized redirect URI: `http://localhost:5000/api/callback`
 7. Copy your Client ID and Client Secret
 
 **Step 2: Set Environment Variables**
@@ -180,15 +182,43 @@ Create `.env` file in your project root:
 ```
 GOOGLE_CLIENT_ID=your_client_id_here
 GOOGLE_CLIENT_SECRET=your_client_secret_here
-GOOGLE_CALLBACK_URL=http://localhost:5000/api/callback
 DATABASE_URL=postgresql://user:password@localhost:5432/vocab_master
 OPENAI_API_KEY=sk-...
 SESSION_SECRET=dev-secret-123
 NODE_ENV=development
 ```
 
-For production, update:
-- `GOOGLE_CALLBACK_URL=https://yourdomain.com/api/callback`
+#### For Replit Deployment
+
+**Step 1: Get Your Replit Public URL**
+1. In Replit, go to your project's "Secrets" tab on the left sidebar (or lock icon)
+2. Look for or note your public URL (typically shown in the project view)
+3. It should look like: `https://[project-name].replit.dev`
+
+**Step 2: Update Google Cloud Console**
+1. Go to [Google Cloud Console](https://console.cloud.google.com)
+2. Open your OAuth 2.0 Client ID
+3. Under "Authorized redirect URIs", add: `https://[your-project].replit.dev/api/callback`
+4. Replace `[your-project]` with your actual Replit project name
+5. Click "Save"
+
+**Step 3: Set Replit Secrets**
+In your Replit project, go to Secrets (lock icon on left sidebar) and add:
+```
+GOOGLE_CLIENT_ID=your_client_id_here
+GOOGLE_CLIENT_SECRET=your_client_secret_here
+DATABASE_URL=your_neon_or_postgres_url
+OPENAI_API_KEY=sk-...
+SESSION_SECRET=random-secret-key
+```
+
+The app automatically uses `REPLIT_PUBLICURL` environment variable for the OAuth callback, so you don't need to manually set it.
+
+#### For Production (Any Server)
+
+Update:
+- Add your domain's callback URI to Google OAuth: `https://yourdomain.com/api/callback`
+- Set `GOOGLE_CALLBACK_URL=https://yourdomain.com/api/callback` in your server environment
 - `NODE_ENV=production`
 - Use a secure PostgreSQL instance (Neon, AWS RDS, etc.)
 

@@ -63,7 +63,18 @@ export async function setupAuth(app: Express) {
 
   const clientID = process.env.GOOGLE_CLIENT_ID;
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-  const callbackURL = process.env.GOOGLE_CALLBACK_URL || "http://localhost:5000/api/callback";
+  
+  // Determine callback URL based on environment
+  let callbackURL = process.env.GOOGLE_CALLBACK_URL;
+  if (!callbackURL) {
+    // For Replit: use the public URL if available
+    if (process.env.REPLIT_PUBLICURL) {
+      callbackURL = `${process.env.REPLIT_PUBLICURL}/api/callback`;
+    } else {
+      // For local development
+      callbackURL = "http://localhost:5000/api/callback";
+    }
+  }
 
   // For development, allow starting without credentials
   if (!clientID || !clientSecret) {
