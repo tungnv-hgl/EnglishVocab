@@ -7,7 +7,7 @@ VocabMaster is a comprehensive English vocabulary learning platform with user au
 - **Frontend**: React 18 with TypeScript, TailwindCSS, Shadcn/ui components
 - **Backend**: Express.js with TypeScript
 - **Database**: PostgreSQL with Drizzle ORM
-- **Authentication**: Replit Auth (OIDC-based)
+- **Authentication**: Replit Auth (OIDC-based) + Mock Auth for local dev
 - **Routing**: Wouter for client-side routing
 - **State Management**: TanStack Query for server state
 
@@ -46,6 +46,9 @@ VocabMaster is a comprehensive English vocabulary learning platform with user au
 │   ├── replitAuth.ts     # Authentication setup
 │   ├── db.ts             # Database connection
 │   └── seed.ts           # Sample data seeding
+├── dev-windows.js        # Windows Node.js dev launcher
+├── dev-windows.bat       # Windows batch dev launcher
+├── dev-windows.sh        # Git Bash dev launcher
 └── shared/
     └── schema.ts         # Database schema & types
 ```
@@ -59,7 +62,7 @@ VocabMaster is a comprehensive English vocabulary learning platform with user au
 - **quizResults**: Quiz/study session results
 
 ## Key Features
-1. **User Authentication**: Replit Auth with OIDC
+1. **User Authentication**: Replit Auth on Replit, Mock Auth for local development
 2. **Vocabulary Management**: Full CRUD operations, bulk import (CSV/JSON)
 3. **Collections**: Organize words into themed groups
 4. **Learning Modes**:
@@ -67,7 +70,8 @@ VocabMaster is a comprehensive English vocabulary learning platform with user au
    - Flashcards with flip animation
    - Spelling Test with hints
 5. **Progress Tracking**: Track mastered words, quiz accuracy, study history
-6. **Responsive Design**: Mobile-friendly with sidebar navigation
+6. **Text-to-Speech**: OpenAI pronunciation support in all learning modes
+7. **Responsive Design**: Mobile-friendly with sidebar navigation
 
 ## API Endpoints
 - `GET/POST /api/collections` - Collection management
@@ -84,7 +88,8 @@ The project uses `npm run dev` which starts both the Express backend and Vite fr
 ## Database Commands
 - `npm run db:push` - Push schema changes to database
 
-## Running Locally
+## Running Locally (Windows, Mac, Linux)
+
 To run VocabMaster on your local machine:
 
 ### Prerequisites
@@ -109,8 +114,7 @@ To run VocabMaster on your local machine:
    ```
    DATABASE_URL=postgresql://user:password@localhost:5432/vocab_master
    OPENAI_API_KEY=sk-xxx...your_openai_api_key
-   SESSION_SECRET=your_random_secret_for_sessions
-   REPLIT_AUTH_TOKEN=optional_for_local_auth
+   SESSION_SECRET=dev-secret-123
    ```
    
    **Important:** The file must be in the root directory for the app to find it.
@@ -126,24 +130,19 @@ To run VocabMaster on your local machine:
    npm run db:push
    ```
 
-5. **Update package.json scripts for Windows** (Windows users only)
-   
-   Edit the `package.json` file and replace these lines in the "scripts" section:
-   ```json
-   "dev": "cross-env NODE_ENV=development tsx server/index.ts",
-   "start": "cross-env NODE_ENV=production node dist/index.cjs"
-   ```
-   
-   Then save the file. This allows the app to run on Windows.
+5. **Start the development server**
 
-6. **Start the development server**
-   
-   **Linux/Mac:**
+   **Windows (recommended):**
    ```bash
-   npm run dev
+   dev-windows.bat
    ```
    
-   **Windows (after editing package.json):**
+   **Windows (Git Bash alternative):**
+   ```bash
+   bash dev-windows.sh
+   ```
+   
+   **Mac/Linux:**
    ```bash
    npm run dev
    ```
@@ -154,17 +153,6 @@ To run VocabMaster on your local machine:
 - **Local PostgreSQL**: Install PostgreSQL locally and use `postgresql://localhost:5432/vocab_master`
 - **Neon (recommended)**: Sign up at https://neon.tech and get a connection string with one click
 
-### Windows-Specific Setup
-If you're on Windows and get `'NODE_ENV' is not recognized` error:
-
-1. The `cross-env` package is already installed
-2. Edit `package.json` and update lines 7 and 9:
-   - Change line 7 from: `"dev": "NODE_ENV=development tsx server/index.ts"`
-   - Change to: `"dev": "cross-env NODE_ENV=development tsx server/index.ts"`
-   - Change line 9 from: `"start": "NODE_ENV=production node dist/index.cjs"`
-   - Change to: `"start": "cross-env NODE_ENV=production node dist/index.cjs"`
-3. Save and run `npm run dev`
-
 ### Local Development Authentication
 When running locally (not on Replit), the app automatically uses mock authentication:
 - You'll be logged in as "Dev User" with email `dev@localhost.local`
@@ -173,10 +161,37 @@ When running locally (not on Replit), the app automatically uses mock authentica
 - No need to provide REPLIT_AUTH_TOKEN for local development
 
 ### Troubleshooting
-- If you get "Database connection failed", check your `DATABASE_URL` in `.env.local`
-- If TTS doesn't work, ensure `OPENAI_API_KEY` is valid
-- For auth issues, restart the dev server: `npm run dev`
-- Windows users: Make sure to update package.json scripts with cross-env as shown above
+
+**"Cannot find module" or "command not found" errors:**
+- Run `npm install` again to ensure all dependencies are installed
+- Delete `node_modules` folder and `package-lock.json`, then run `npm install` fresh
+
+**"DATABASE_URL must be set" error:**
+- Make sure `.env` or `.env.local` file exists in the root directory
+- Verify the file contains: `DATABASE_URL=postgresql://...`
+- Windows users: Use `dev-windows.bat` instead of `npm run dev`
+
+**"Database connection failed" error:**
+- Check your `DATABASE_URL` in `.env` file
+- Make sure PostgreSQL is running
+- Test connection: `psql -U postgres -h localhost -p 5432 -d vocab_master`
+
+**"clientId must be a non-empty string" error:**
+- This means environment variables aren't loading properly
+- Windows users: Use `dev-windows.bat` which handles this automatically
+- Make sure `.env` file exists in the root directory
+
+**TTS (pronunciation) doesn't work:**
+- Ensure `OPENAI_API_KEY` is set correctly in `.env`
+- Try clicking the speaker button again - it may take a few seconds on first use
+- Check that the API key is valid at https://platform.openai.com/api-keys
+
+**Still having issues:**
+1. Delete `node_modules` folder
+2. Run `npm install`
+3. Create fresh `.env` file with your credentials
+4. Use `dev-windows.bat` on Windows
+5. Check that PostgreSQL is running on the correct port
 
 ## User Preferences
 - Dark mode support with theme toggle
@@ -185,10 +200,12 @@ When running locally (not on Replit), the app automatically uses mock authentica
 
 ## Recent Changes
 - Initial project setup with complete feature set
-- Added Replit Auth integration
+- Added Replit Auth integration with local mock auth fallback
 - Implemented all three learning modes
 - Created bulk import functionality for CSV/JSON
 - Added progress tracking and dashboard stats
 - Integrated OpenAI text-to-speech for pronunciation support in all learning modes
 - Fixed TTS endpoint with proper ES6 imports
 - Added speaker icons to Flashcards, Quiz, and Spelling modes
+- Created Windows-friendly dev launchers (dev-windows.bat, dev-windows.sh, dev-windows.js)
+- Added comprehensive local development setup documentation
