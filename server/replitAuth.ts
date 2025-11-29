@@ -3,6 +3,7 @@ import { Strategy, type VerifyFunction } from "openid-client/passport";
 
 import passport from "passport";
 import session from "express-session";
+import MemoryStore from "memorystore";
 import type { Express, RequestHandler } from "express";
 import memoize from "memoizee";
 import connectPg from "connect-pg-simple";
@@ -24,6 +25,24 @@ const getOidcConfig = memoize(
 
 export function getSession() {
   const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
+  
+  // For local development (Windows), use in-memory store
+  if (!process.env.REPL_ID) {
+    const memStore = new (MemoryStore(session))({ checkPeriod: 86400000 });
+    return session({
+      secret: process.env.SESSION_SECRET!,
+      store: memStore,
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        httpOnly: false, // Allow non-HTTPS locally
+        secure: false,
+        maxAge: sessionTtl,
+      },
+    });
+  }
+  
+  // For Replit production, use PostgreSQL store
   const pgStore = connectPg(session);
   const sessionStore = new pgStore({
     conString: process.env.DATABASE_URL,
