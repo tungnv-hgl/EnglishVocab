@@ -21,7 +21,10 @@ import {
   Trash2, 
   Edit, 
   BookOpen,
-  Clock 
+  Clock,
+  Brain,
+  Zap,
+  Target
 } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -190,8 +193,8 @@ export default function Collections() {
                     </div>
                   )}
 
-                  <div className="flex gap-2 pt-2">
-                    <Link href={`/collections/${collection.id}`} className="flex-1">
+                  <div className="flex flex-col gap-2 pt-2">
+                    <Link href={`/collections/${collection.id}`} className="w-full">
                       <Button 
                         variant="outline" 
                         className="w-full"
@@ -200,15 +203,41 @@ export default function Collections() {
                         View Words
                       </Button>
                     </Link>
-                    <Link href={`/learn/quiz?collection=${collection.id}`} className="flex-1">
-                      <Button 
-                        className="w-full"
-                        disabled={collection.wordCount < 2}
-                        data-testid={`button-study-collection-${collection.id}`}
-                      >
-                        Study
-                      </Button>
-                    </Link>
+                    <div className="grid grid-cols-3 gap-2">
+                      <Link href={`/learn/quiz?collection=${collection.id}`} className="w-full">
+                        <Button 
+                          className="w-full"
+                          disabled={collection.wordCount < 2}
+                          size="sm"
+                          data-testid={`button-quiz-collection-${collection.id}`}
+                          title="Multiple Choice Quiz"
+                        >
+                          <Brain className="h-4 w-4" />
+                        </Button>
+                      </Link>
+                      <Link href={`/learn/flashcards?collection=${collection.id}`} className="w-full">
+                        <Button 
+                          className="w-full"
+                          disabled={collection.wordCount < 1}
+                          size="sm"
+                          data-testid={`button-flashcard-collection-${collection.id}`}
+                          title="Flashcards"
+                        >
+                          <Zap className="h-4 w-4" />
+                        </Button>
+                      </Link>
+                      <Link href={`/learn/spelling?collection=${collection.id}`} className="w-full">
+                        <Button 
+                          className="w-full"
+                          disabled={collection.wordCount < 1}
+                          size="sm"
+                          data-testid={`button-spelling-collection-${collection.id}`}
+                          title="Spelling Test"
+                        >
+                          <Target className="h-4 w-4" />
+                        </Button>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </CardContent>
