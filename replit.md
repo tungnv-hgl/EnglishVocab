@@ -62,7 +62,9 @@ VocabMaster is a comprehensive English vocabulary learning platform with user au
 - **quizResults**: Quiz/study session results
 
 ## Key Features
-1. **User Authentication**: Replit Auth on Replit, Mock Auth for local development
+1. **User Authentication**: 
+   - **Replit Production**: Google OAuth via Replit Auth (built-in, no setup needed)
+   - **Local Development**: Form-based login (email, first name, last name)
 2. **Vocabulary Management**: Full CRUD operations, bulk import (CSV/JSON)
 3. **Collections**: Organize words into themed groups
 4. **Learning Modes**:
@@ -74,6 +76,9 @@ VocabMaster is a comprehensive English vocabulary learning platform with user au
 7. **Responsive Design**: Mobile-friendly with sidebar navigation
 
 ## API Endpoints
+- `POST /api/auth/register` - Register/login with email (local dev only)
+- `GET /api/auth/user` - Get current user profile
+- `PATCH /api/profile` - Update user profile
 - `GET/POST /api/collections` - Collection management
 - `GET/POST /api/vocabulary` - Vocabulary management
 - `POST /api/vocabulary/import` - Bulk import
@@ -159,11 +164,19 @@ To run VocabMaster on your local machine:
 - **Neon (recommended)**: Sign up at https://neon.tech and get a connection string with one click
 
 ### Local Development Authentication
-When running locally (not on Replit), the app automatically uses mock authentication:
-- You'll be logged in as "Dev User" with email `dev@localhost.local`
-- All API endpoints will work without Replit Auth
+When running locally (not on Replit), the app uses form-based authentication:
+- **Login Page**: Enter your email, first name, and last name to sign in
+- No Google OAuth keys needed - simpler local testing
+- Each user gets a unique ID based on their email
+- All API endpoints work without Replit Auth
 - Perfect for testing the full feature set locally
-- No need to provide REPLIT_AUTH_TOKEN for local development
+
+### Production (Replit) Authentication
+When deployed on Replit:
+- **Google OAuth**: One-click login with Google via Replit Auth (built-in)
+- User profile automatically populated from Google account
+- No additional Google API key setup needed - Replit handles everything
+- Secure OIDC tokens and session management
 
 ## Windows Quick Start (TL;DR)
 
@@ -186,7 +199,14 @@ If you just want to run it quickly on Windows:
 
 4. Open http://localhost:5000 in your browser
 
-Done! You're logged in as "Dev User" and can test everything locally.
+5. Open http://localhost:5000
+6. On the login page, enter:
+   - Email: any email (e.g., `test@example.com`)
+   - First Name: any name (e.g., `John`)
+   - Last Name: any name (e.g., `Doe`)
+7. Click "Sign In"
+
+Done! You're now logged in and can test everything locally.
 
 ### Troubleshooting
 
@@ -237,3 +257,8 @@ Done! You're logged in as "Dev User" and can test everything locally.
 - Added speaker icons to Flashcards, Quiz, and Spelling modes
 - Created Windows-friendly dev launchers (dev-windows.bat, dev-windows.sh, dev-windows.js)
 - Added comprehensive local development setup documentation
+- **NEW**: Implemented dual authentication system:
+  - Google OAuth for production (Replit) - built-in, no setup needed
+  - Form-based login for local development - email, first name, last name
+  - Created `/login` page with proper user information collection
+  - No additional Google API keys required
