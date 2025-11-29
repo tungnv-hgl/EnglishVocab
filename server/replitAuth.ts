@@ -75,6 +75,7 @@ export async function setupAuth(app: Express) {
       callbackURL = "http://localhost:5000/api/callback";
     }
   }
+  console.log("Google OAuth callback URL:", callbackURL);
 
   // For development, allow starting without credentials
   if (!clientID || !clientSecret) {
