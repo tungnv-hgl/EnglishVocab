@@ -218,6 +218,19 @@ export default function SpellingMode() {
     );
   }
 
+  if (!words || words.length === 0) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <Card className="p-12">
+          <div className="text-center">
+            <h2 className="text-xl font-semibold mb-2">Loading Spelling Test...</h2>
+            <p className="text-muted-foreground">Preparing your words...</p>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
   if (isComplete) {
     const score = (correctCount / words.length) * 100;
     const scoreColor = score >= 80 ? "text-chart-2" : score >= 60 ? "text-chart-4" : "text-destructive";
