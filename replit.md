@@ -132,17 +132,22 @@ To run VocabMaster on your local machine:
 
 5. **Start the development server**
 
-   **Windows (recommended):**
-   ```bash
+   **Windows (PowerShell - Recommended):**
+   ```powershell
+   .\dev-windows.bat
+   ```
+   
+   **Windows (Command Prompt):**
+   ```cmd
    dev-windows.bat
    ```
    
-   **Windows (Git Bash alternative):**
-   ```bash
-   bash dev-windows.sh
-   ```
-   
    **Mac/Linux:**
+   ```bash
+   npm run dev
+   ```
+
+   **Alternative for all platforms (if you edit package.json):**
    ```bash
    npm run dev
    ```
@@ -159,6 +164,29 @@ When running locally (not on Replit), the app automatically uses mock authentica
 - All API endpoints will work without Replit Auth
 - Perfect for testing the full feature set locally
 - No need to provide REPLIT_AUTH_TOKEN for local development
+
+## Windows Quick Start (TL;DR)
+
+If you just want to run it quickly on Windows:
+
+1. Create `.env` in your project root:
+   ```
+   DATABASE_URL=postgresql://postgres:30042001@localhost:5433/vocab_master
+   OPENAI_API_KEY=sk-proj-...your_key...
+   SESSION_SECRET=dev-secret
+   ```
+
+2. Open PowerShell in your project directory
+
+3. Run:
+   ```powershell
+   npm install
+   .\dev-windows.bat
+   ```
+
+4. Open http://localhost:5000 in your browser
+
+Done! You're logged in as "Dev User" and can test everything locally.
 
 ### Troubleshooting
 
